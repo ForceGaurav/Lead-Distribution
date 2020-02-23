@@ -1,0 +1,49 @@
+public class LeadDistribution {
+    public Lead CurentLeadRec{set;get;}
+    public LeadDistribution(ApexPages.StandardController Controller) {
+        this.CurentLeadRec = (Lead)controller.getRecord();     
+    }
+    public Pagereference userDistribution(){
+        try{
+            String usertoaddincustom='';
+            for(User use:[SELECT id,Center__c FROM User WHERE Center__c!=NULL AND IsActive=true AND Center__c=:CurentLeadRec.Center__c]){
+                usertoaddincustom+=String.valueOf(use.get('id'))+',';
+            }
+            String assigneduser='';
+            /*Custom Setting use to store user mapping for each centers*/
+            List<UserCenterMapping__c> usercentermapping = [SELECT name,CenterUsers__c FROM UserCenterMapping__c WHERE Name=:CurentLeadRec.Center__c];
+            if(usercentermapping!=NULL && !usercentermapping.isEmpty()){
+                for(UserCenterMapping__c usermapp:usercentermapping){
+                    if(usermapp.CenterUsers__c.contains(',')){
+                        assigneduser=String.valueOf(usermapp.get('CenterUsers__c')).split(',')[0];
+                        String removeowner=assigneduser+',';
+                        usermapp.CenterUsers__c=usermapp.CenterUsers__c.replace(removeowner,'');
+                    }
+                    else{
+                        assigneduser=String.valueOf(usermapp.get('CenterUsers__c'));
+                        usermapp.CenterUsers__c=usermapp.CenterUsers__c.replace(assigneduser,'');
+                    }
+                    if(String.isEmpty(usermapp.CenterUsers__c)){
+                        usermapp.CenterUsers__c=usertoaddincustom;
+                    }
+                }
+                  update usercentermapping;
+            }
+            
+            if(!String.isEmpty(assigneduser) && assigneduser.startsWith('005')) {
+                CurentLeadRec.OwnerId=assigneduser;
+            }
+            else{
+                CurentLeadRec.OwnerId=UserInfo.getUserId();
+            }
+            insert CurentLeadRec;
+            PageReference myVFPage = new PageReference('/'+CurentLeadRec.id);
+            myVFPage.setRedirect(true);
+            return myVFPage;
+        }
+        catch (Exception e){
+            System.debug('DmlException-->'+e.getMessage());
+        }
+        return null;
+    }
+}

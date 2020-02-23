@@ -1,0 +1,33 @@
+<apex:page standardController="Lead" extensions="LeadDistribution" sidebar="false" showHeader="false" lightningStylesheets="true">
+    <apex:slds/>
+    <apex:form>
+        <apex:pageMessages id="message"/>
+        <apex:pageBlock>
+            <apex:pageBlockSection title="Lead Information" collapsible="false" columns="2">
+                <apex:inputField value="{!lead.Salutation}"/>
+                <apex:inputField value="{!lead.Phone}"/> 
+                <apex:inputField value="{!lead.FirstName}" />
+                <apex:inputField value="{!lead.Email}"/>
+                <apex:inputField value="{!lead.LastName}"/> 
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Company Details" collapsible="false" columns="2">
+                <apex:inputField value="{!lead.Company}"/> 
+                <apex:inputField value="{!lead.Website}"/> 
+                <apex:inputField value="{!lead.LeadSource}"/> 
+                <apex:inputField value="{!lead.Industry}"/> 
+            </apex:pageBlockSection>
+            <apex:pageBlockSection title="Adress Information" columns="2" collapsible="false" >
+                <apex:inputField value="{!lead.Street}"/> 
+                <apex:inputField value="{!lead.City}"/> 
+                <apex:inputField value="{!lead.State}"/> 
+                <apex:inputField value="{!lead.PostalCode}"/> 
+                <apex:inputField value="{!lead.Country}"/>
+                <apex:inputField value="{!lead.Center__c}" required="true"/> 
+            </apex:pageBlockSection>
+            <apex:pageBlockButtons location="bottom" >
+                <apex:commandButton value="Save" action="{!userDistribution}" reRender="message"/>
+                <apex:commandButton value="Cancel" immediate="true" />
+            </apex:pageBlockButtons>
+        </apex:pageBlock>
+    </apex:form>
+</apex:page>
